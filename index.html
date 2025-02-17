@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SimpleJS - The best JavaScript simplifier</title>
+  <!-- Ace Editor CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js" integrity="sha512-mBhdQuF20KjtSsZODvBg1flAzgF5s+6+om/wL7Uy1N70BrnG0Yd7eFAUuToL+5Q2W31Zc0s05wcklH8z8c+0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    /* Global Styles */
+    body {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .controls label {
+      font-size: 1rem;
+    }
+    .controls input,
+    .controls button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .controls input {
+      width: 80px;
+      background-color: #252526;
+      color: #d4d4d4;
+    }
+    .controls button {
+      background-color: #0e639c;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .controls button:hover {
+      background-color: #1177bb;
+    }
+    .editors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .editor-container {
+      flex: 1 1 45%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .editor-container h2 {
+      margin-bottom: 10px;
+    }
+    .editor {
+      height: 400px;
+      width: 100%;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+    /* Loading Spinner */
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(30, 30, 30, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      border-radius: 4px;
+      z-index: 10;
+    }
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #0e639c;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .editors {
+        flex-direction: column;
+      }
+      .editor-container {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>SimpleJS - The best JavaScript simplifier</h1>
+    </header>
+    <section class="controls">
+      <label for="layersInput">Layers:</label>
+      <input type="number" id="layersInput" min="1" value="1" />
+      <button id="simplifyButton">Simplify!</button>
+    </section>
+    <section class="editors">
+      <div class="editor-container">
+        <h2>Input Code</h2>
+        <div id="inputEditor" class="editor"></div>
+      </div>
+      <div class="editor-container">
+        <h2>Output Code</h2>
+        <div id="outputEditor" class="editor"></div>
+        <!-- Loading overlay -->
+        <div id="loading" class="loading-overlay">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Include the global simplifyCode function -->
+  <script src="simplifyCode.js"></script>
+  <script>
+    // Initialize Ace Editor for the input code box
+    var inputEditor = ace.edit("inputEditor");
+    inputEditor.setTheme("ace/theme/monokai");
+    inputEditor.session.setMode("ace/mode/javascript");
+
+    // Initialize Ace Editor for the output code box (read-only)
+    var outputEditor = ace.edit("outputEditor");
+    outputEditor.setTheme("ace/theme/monokai");
+    outputEditor.session.setMode("ace/mode/javascript");
+    outputEditor.setReadOnly(true);
+    outputEditor.renderer.$cursorLayer.element.style.display = "none";
+
+    // When the Simplify button is clicked...
+    document.getElementById("simplifyButton").addEventListener("click", function() {
+      // Show the loading spinner
+      document.getElementById("loading").style.display = "flex";
+      
+      // Use a short timeout to ensure the spinner appears before processing
+      setTimeout(function() {
+        // Get the input code and number of layers
+        var code = inputEditor.getValue();
+        var layers = parseInt(document.getElementById("layersInput").value) || 1;
+        
+        // Call the global simplifyCode function
+        var result = simplifyCode(code, layers);
+        
+        // Display the result in the output editor
+        outputEditor.setValue(result, -1);
+        
+        // Hide the loading spinner
+        document.getElementById("loading").style.display = "none";
+      }, 100);
+    });
+  </script>
+</body>
+</html>
