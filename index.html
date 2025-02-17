@@ -169,7 +169,7 @@
         var result = simplifyCode(code, layers);
         
         // Display the result in the output editor
-        outputEditor.setValue(result, -1);
+        outputEditor.session.setValue(result);
         
         // Hide the loading spinner
         document.getElementById("loading").style.display = "none";
