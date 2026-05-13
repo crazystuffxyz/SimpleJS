@@ -162,13 +162,13 @@
       // Show the loading spinner
       loadingOverlay.style.display = "flex";
       
-      setTimeout(function() {
+      setTimeout(async function() {
         // Use .value to get/set textarea content
         var code = inputEditor.value;
         var layers = parseInt(document.getElementById("layersInput").value) || 1;
         
         // Call the global simplifyCode function
-        var result = simplifyCode(code, layers);
+        var result = await simplifyCode(code, layers);
         
         // Display the result
         outputEditor.value = result;
