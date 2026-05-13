@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SimpleJS - The best JavaScript simplifier</title>
-  <!-- Ace Editor CDN (integrity attribute removed) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
     /* Global Styles */
     body {
@@ -70,12 +68,22 @@
     .editor-container h2 {
       margin-bottom: 10px;
     }
+    
+    /* Updated Editor Styles for Textarea */
     .editor {
       height: 400px;
       width: 100%;
+      background-color: #252526;
+      color: #d4d4d4;
       border: 1px solid #333;
       border-radius: 4px;
+      padding: 15px;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      resize: vertical;
+      box-sizing: border-box; /* Ensures padding doesn't affect width */
     }
+    
     /* Loading Spinner */
     .loading-overlay {
       position: absolute;
@@ -126,11 +134,13 @@
     <section class="editors">
       <div class="editor-container">
         <h2>Input Code</h2>
-        <div id="inputEditor" class="editor"></div>
+        <!-- Changed to textarea -->
+        <textarea id="inputEditor" class="editor" placeholder="Paste your JavaScript code here..."></textarea>
       </div>
       <div class="editor-container">
         <h2>Output Code</h2>
-        <div id="outputEditor" class="editor"></div>
+        <!-- Changed to textarea and added readonly -->
+        <textarea id="outputEditor" class="editor" readonly></textarea>
         <!-- Loading overlay -->
         <div id="loading" class="loading-overlay">
           <div class="spinner"></div>
@@ -139,40 +149,32 @@
     </section>
   </div>
 
-  <!-- Include the global simplifyCode function -->
   <script src="simplifyCode.js"></script>
   <script>
-    // Initialize Ace Editor for the input code box
-    var inputEditor = ace.edit("inputEditor");
-    inputEditor.setTheme("ace/theme/monokai");
-    inputEditor.session.setMode("ace/mode/javascript");
-
-    // Initialize Ace Editor for the output code box (read-only)
-    var outputEditor = ace.edit("outputEditor");
-    outputEditor.setTheme("ace/theme/monokai");
-    outputEditor.session.setMode("ace/mode/javascript");
-    outputEditor.setReadOnly(true);
-    outputEditor.renderer.$cursorLayer.element.style.display = "none";
+    // Get references to elements
+    const inputEditor = document.getElementById("inputEditor");
+    const outputEditor = document.getElementById("outputEditor");
+    const simplifyButton = document.getElementById("simplifyButton");
+    const loadingOverlay = document.getElementById("loading");
 
     // When the Simplify button is clicked...
-    document.getElementById("simplifyButton").addEventListener("click", function() {
+    simplifyButton.addEventListener("click", function() {
       // Show the loading spinner
-      document.getElementById("loading").style.display = "flex";
+      loadingOverlay.style.display = "flex";
       
-      // Use a short timeout to ensure the spinner appears before processing
       setTimeout(function() {
-        // Get the input code and number of layers
-        var code = inputEditor.getValue();
+        // Use .value to get/set textarea content
+        var code = inputEditor.value;
         var layers = parseInt(document.getElementById("layersInput").value) || 1;
         
         // Call the global simplifyCode function
         var result = simplifyCode(code, layers);
         
-        // Display the result in the output editor
-        outputEditor.session.setValue(result);
+        // Display the result
+        outputEditor.value = result;
         
         // Hide the loading spinner
-        document.getElementById("loading").style.display = "none";
+        loadingOverlay.style.display = "none";
       }, 100);
     });
   </script>
